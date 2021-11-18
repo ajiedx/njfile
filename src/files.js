@@ -5,7 +5,7 @@ const { NjFile } = require('./file')
 class NjFiles extends NjSuper {
     constructor(dt, objx, t) {
         super(dt, objx, t)
-        if (this.construct === false) {
+        if (this.construct == false) {
             this.dirs = {}
         } else {
             this.scanned = []
@@ -131,10 +131,6 @@ class NjFiles extends NjSuper {
             }
         }
 
-        if (this.dirs === undefined) {
-            this.dirs = {}
-        }
-        
         Object.assign(this.dirs, {[opt.name]: {path}})
         
         this.dir = opt.name
