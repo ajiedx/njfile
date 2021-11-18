@@ -1,0 +1,27 @@
+{
+  "name": "njfile",
+  "version": "1.0.0",
+  "description": "File Management Helper for njreload",
+  "main": "njfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajiedx/njfile.git"
+  },
+  "keywords": [
+    "file",
+    "njreloadm",
+    "fs"
+  ],
+  "author": "ajiedx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajiedx/njfile/issues"
+  },
+  "homepage": "https://github.com/ajiedx/njfile#readme",
+  "dependencies": {
+    "njsuper": "^1.0.0"
+  }
+}
