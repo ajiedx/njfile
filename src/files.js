@@ -5,7 +5,23 @@ const { NjFile } = require('./file')
 class NjFiles extends NjSuper {
     constructor(dt, objx, t) {
         super(dt, objx, t)
-        this.dirs = {}
+        if (this.construct === false) {
+            this.dirs = {}
+        } else {
+            this.scanned = []
+            for (const i in this.dirs) {
+                const folder = this.dirs[i].split('/').pop()
+
+                if(!this.scanned.includes(folder)) {
+                    this[folder] = new NjFiles(folder, {entity: folder, construct: false})
+                    this[folder].setDir(this.dirs[i], {name: folder})
+                    for (const l in this.ext) {
+                        this[folder].setExt(this.ext[l], folder, this.rec)
+                    }
+                    this.scanned.push(folder)
+                }
+            }
+        }
     }
 
     readFiles() {
