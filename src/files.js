@@ -130,6 +130,11 @@ class NjFiles extends NjSuper {
                 this.entites = [opt.entity]
             }
         }
+
+        if (this.dirs === undefined) {
+            this.dirs = {}
+        }
+        
         Object.assign(this.dirs, {[opt.name]: {path}})
         
         this.dir = opt.name
