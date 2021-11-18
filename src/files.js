@@ -1,8 +1,8 @@
 const { NjSuper } = require('njsuper')
 const { readdirSync } = require('fs')
-const { File } = require('./file')
+const { NjFile } = require('./file')
 
-class Files extends NjSuper {
+class NjFiles extends NjSuper {
     constructor(dt, objx, t) {
         super(dt, objx, t)
         this.dirs = {}
@@ -11,7 +11,7 @@ class Files extends NjSuper {
     readFiles() {
         for (const name in this.files) {
             Object.defineProperty(this, [name], {
-                value: this.resolveObject(name, { obj: File, path: this.files[name].path }),
+                value: this.resolveObject(name, { obj: NjFile, path: this.files[name].path }),
                 enumerable: true,
                 writable: true,
                 configurable: true
@@ -121,4 +121,4 @@ class Files extends NjSuper {
     }
 }
 
-module.exports = { Files, File }
+module.exports = { NjFiles, NjFile }

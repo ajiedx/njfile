@@ -1,7 +1,7 @@
 const { NjSuper } = require('njsuper')
 const { readFileSync, statSync } = require('fs')
 
-class File extends NjSuper {
+class NjFile extends NjSuper {
     constructor(dt, objx, t) {
         super(dt, objx, t)
         this.updateFile()
@@ -31,4 +31,4 @@ class File extends NjSuper {
     }
 }
 
-module.exports = { File }
+module.exports = { NjFile }
