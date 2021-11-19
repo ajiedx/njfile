@@ -7,6 +7,7 @@ class NjFiles extends NjSuper {
         super(dt, objx, t)
         if (this.construct == false) {
             this.dirs = {}
+
         } else {
             this.scanned = []
             for (const i in this.dirs) {
@@ -21,13 +22,15 @@ class NjFiles extends NjSuper {
                     this.scanned.push(folder)
                 }
             }
+
+            
         }
     }
 
     readFiles() {
-        for (const name in this.files) {
+        for (const name in this.fls) {
             Object.defineProperty(this, [name], {
-                value: this.resolveObject(name, { obj: NjFile, path: this.files[name].path }),
+                value: this.resolveObject(name, { obj: NjFile, path: this.fls[name].path }),
                 enumerable: true,
                 writable: true,
                 configurable: true
@@ -37,28 +40,34 @@ class NjFiles extends NjSuper {
         }
     }
     
-    readDir(name, ext, rec) {
+    readDir(name, ext, rec, loop) {
         try {
             var path
-            if (this.dirs[name] === undefined) {
+            if (loop) {
                 path = name
             } else {
-                path = this.dirs[name].path
-                if (name !== undefined) {
-                    this.pathname = name
+                if (this.dirs[name] === undefined) {
+                    path = name
+                } else {
+                    path = this.dirs[name].path
+                    if (name !== undefined) {
+                        this.pathname = name
+                    }
+                    
                 }
-                
+    
+                if (!this.fls) {
+                    this.fls = {}
+                }
             }
 
-            if (!this.files) {
-                this.files = {}
-            }
-            
             if (!ext) {
+
                 if (this.pathname) {
+                    console.log(this.pathname)
                     Object.defineProperty(this, this.pathname, {
                         
-                        value: this.resolveObject(this.entites, this.files),
+                        value: this.resolveObject(this.entites, this.fls),
                         enumerable: true,
                         writable: true,
                         configurable: true
@@ -68,34 +77,44 @@ class NjFiles extends NjSuper {
                 
 
             } else {
-                const dir = readdirSync(path)
-                for (let i = 0; i <= 1; i++) {
-                    if (i === 0) {
-                        for (const dirent of dir) {
-                            if (dirent.includes('.')) {
-                                if (dirent.includes(ext)) {
-                                    const name = dirent.split('.')[0]
-                                    const filepath = path+'/'+dirent
-
-                                    Object.assign(this.files, {[name]: {path: filepath}})
-                                    
-                                } 
-                            } else if (rec === true) {
-                                this.readDir(path+'/'+dirent, ext, false)
-                                
-                            } else if (!dirent.includes('.')) {
-                                if (!dirent.includes(ext)) {
-                                    if (this.rec === true) {
-                                        this.readDir(path+'/'+dirent, ext, true)
-                                    }
+                                            
+                if (rec === false) {
+                    this.readDir(undefined, false, false)
+                    
+                } else {
+                    const dir = readdirSync(path, {withFileTypes: true})
+                    for (let i = 0; i <= 1; i++) {
+                        if (i === 0) {
+                            for (const dirent of dir) {
+    
+                                if(!dirent.isFile()) {
+                                    console.log(dirent)
+                                    this.readDir(path+'/'+dirent.name, ext, rec, true)
                                 }
-                            } 
-            
-                        }
-                    } else {
-                        this.readDir(undefined, false, false)
-                    } 
+                                
+                                if (dirent.name.includes('.')) {
+                                    if (dirent.name.endsWith(ext)) {
+                                        const name = dirent.name.split('.')[0]
+                                        const filepath = path+'/'+dirent.name
+                                        console.log(dirent.isFile())
+                                        if(dirent.isFile) {
+  
+                                            Object.assign(this.fls, {[name]: {path: filepath}})
+                                        }
+    
+                                    } 
+                                } 
+    
+                
+                            }
+                        } else {
+                            this.readDir(undefined, false, false)
+                        } 
+                    }
+    
                 }
+                
+                
             }
 
         } catch (err) {
@@ -129,6 +148,8 @@ class NjFiles extends NjSuper {
             } else {
                 this.entites = [opt.entity]
             }
+        } else {
+            this.entites = [opt.name]
         }
 
         Object.assign(this.dirs, {[opt.name]: {path}})

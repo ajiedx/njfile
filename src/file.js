@@ -6,7 +6,7 @@ class NjFile extends NjSuper {
         super(dt, objx, t)
         this.updateFile()
         // this.stat = statSync(this.path)
-        this.editedMs = statSync(this.path).atimeMs
+        this.editedMs = statSync(this.path).ctimeMs
         this.edited = false
     }
 
@@ -15,12 +15,12 @@ class NjFile extends NjSuper {
     }
 
     updateTime() {
-        this.editedMs = statSync(this.path).atimeMs
+        this.editedMs = statSync(this.path).ctimeMs
         this.edited = false
     }
 
     isEdited() {
-        const editedMs = statSync(this.path).atimeMs
+        const editedMs = statSync(this.path).ctimeMs
         if(this.editedMs === editedMs) {
             this.edited = false
             return false
