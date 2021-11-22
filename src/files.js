@@ -25,6 +25,14 @@ class NjFiles extends NjSuper {
         }
     }
 
+    toSring() {
+        for (const i in this) {
+            if (this[i] instanceof NjFile) {
+                this[i].toSring()
+            }
+        }
+    }
+
     defineFile(name, value) {
         Object.assign(value, {obj: NjFile})
         Object.defineProperty(this, [name], {

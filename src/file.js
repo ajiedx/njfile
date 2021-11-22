@@ -9,17 +9,20 @@ class NjFile extends NjSuper {
         this.dir = this.dir[this.dir.length - 1]
         
         this.updateFile()
+        if (this.string == true) {
+            this.toString()
+        }
         // this.stat = statSync(this.path)
         this.editedMs = statSync(this.path).ctimeMs
         this.edited = false
     }
 
     updateFile() {
-        this.content = readFileSync(this.path)
+        this.buffer = readFileSync(this.path)
     }
 
-    replace() {
-
+    toString() {
+        this.content = this.buffer.toString()
     }
 
     get() {
