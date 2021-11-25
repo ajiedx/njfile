@@ -4,10 +4,18 @@ const { readFileSync, statSync } = require('fs')
 class NjFile extends NjSuper {
     constructor(dt, objx, t) {
         super(dt, objx, t)
-        this.dir = this.path.split('/')
-        this.name = this.dir.pop().split('.')[0]
-        this.dir = this.dir[this.dir.length - 1]
-        
+
+        if (this.path.includes('/')) {
+            this.dir = this.path.split('/')
+            let pop = this.path.split('/')
+            this.ext = pop.pop().split('.')[1]
+            this.name = this.dir.pop().split('.')[0]
+            
+            
+            this.dir = this.dir[this.dir.length - 1]
+        }
+
+
         this.updateFile()
         if (this.string == true) {
             this.toString()

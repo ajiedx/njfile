@@ -55,7 +55,7 @@ class NjFiles extends NjSuper {
         if (this.superfls) {
             delete this.superfls.dt
             for (const id in this.superfls) {
-                console.log(this.typeof(Number(id)), id)
+
                 if(this.typeof(Number(id)) === 'number') {
                     if(this[this.superfls[id].name]) {
                         if (this[this.superfls[id].name] instanceof NjFiles) {
@@ -71,8 +71,6 @@ class NjFiles extends NjSuper {
                                 }
                             )
 
-                            console.log(fl, 'bbb')
-        
                             const next = new NjFile(this.superfls[id].name, this.superfls[id])
                             
                             this[this.superfls[id].name].assign('this', fl, true)
@@ -111,7 +109,7 @@ class NjFiles extends NjSuper {
             if (!ext) {
 
                 if (this.pathname) {
-                    console.log(this.pathname)
+
                     Object.defineProperty(this, this.pathname, {
                         
                         value: this.resolveObject(this.entites, this.fls),
@@ -142,7 +140,7 @@ class NjFiles extends NjSuper {
                                         const filepath = path+'/'+dirent.name
                                         if(dirent.isFile) {
                                             if (this.fls[name]) {
-                                                console.log(this.fls[name])
+
                                                 if (!this.superfls) {
                                                     this.superfls = new NjFiles()
                                                     this.superfls.assign('this', {path: filepath, name}, true)

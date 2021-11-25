@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/ajiedx/njfile#readme",
   "dependencies": {
-    "njsuper": "^1.0.1"
+    "njsuper": "^1.0.2"
   }
 }
