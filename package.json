@@ -1,6 +1,6 @@
 {
   "name": "njfile",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "File Management Helper for njreload",
   "main": "njfile.js",
   "scripts": {
@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/ajiedx/njfile#readme",
   "dependencies": {
-    "njsuper": "^1.0.2"
+    "njsuper": "^1.0.5"
   }
 }
