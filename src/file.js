@@ -43,14 +43,17 @@ class NjFile extends NjSuper {
     }
 
     isEdited() {
-        const editedMs = statSync(this.path).ctimeMs
-        if(this.editedMs === editedMs) {
-            this.edited = false
-            return false
-        } else {
-            this.edited = true
-            return true
+        if (!this.edited) {
+            const editedMs = statSync(this.path).ctimeMs
+            if(this.editedMs === editedMs) {
+                this.edited = false
+                return false
+            } else {
+                this.edited = true
+                return true
+            }
         }
+
     }
 }
 

@@ -3,27 +3,44 @@ const { readdirSync } = require('fs')
 const { NjFile } = require('./file')
 
 class NjFiles extends NjSuper {
-    constructor(dt, objx, t) {
-        super(dt, objx, t)
+    constructor(dt, objx) {
+        super(dt, objx)
         if (this.construct == false) {
             this.dirs = {}
-
         } else if (this.dirs) {
             this.scanned = []
-            for (const i in this.dirs) {
-                const folder = this.dirs[i].split('/').pop()
-
-                if(!this.scanned.includes(folder)) {
-                    this[folder] = new NjFiles(folder, {entity: folder, construct: false})
-                    this[folder].setDir(this.dirs[i], {name: folder})
-                    for (const l in this.ext) {
-                        this[folder].setExt(this.ext[l], folder, this.rec)
+            if (this.typeof(this.dirs) === 'array') {
+                for (const i in this.dirs) {
+                    const folder = this.dirs[i].split('/').pop()
+                    
+                    if(!this.scanned.includes(folder)) {
+                        this[folder] = new NjFiles(folder, {entity: folder, construct: false})
+                        this[folder].setDir(this.dirs[i], {name: folder})
+                        for (const l in this.ext) {
+                            this[folder].setExt(this.ext[l], folder, this.recursive)
+                        }
+                        this.scanned.push(folder)
                     }
-                    this.scanned.push(folder)
                 }
+            } else if (this.dt.includes('/')) {
+                const folder = this.dt.split('/').pop()
+                if (!this.ext) {
+                    this.setDir(this.dt, {name: folder})
+                    this.readDir(folder, 'all', this.recursive)
+                    this.readFiles()
+                } else {
+                    for (const l in this.ext) {
+                        this[this.ext[l]] = new NjFiles(this.ext[l], {entity: folder, construct: false})
+                        this[this.ext[l]].setDir(this.dt, {name: folder})
+                        this[this.ext[l]].setExt(this.ext[l], folder, this.recursive)
+                    }
+                } 
             }
         }
+
     }
+
+
 
     toSring() {
         for (const i in this) {
@@ -49,42 +66,31 @@ class NjFiles extends NjSuper {
             const value = {obj: NjFile}
             Object.assign(value, this.fls[name])
             this.defineFile(name, value)
-           
         }
+    }
 
-        if (this.superfls) {
-            delete this.superfls.dt
-            for (const id in this.superfls) {
-
-                if(this.typeof(Number(id)) === 'number') {
-                    if(this[this.superfls[id].name]) {
-                        if (this[this.superfls[id].name] instanceof NjFiles) {
-                            const next = new NjFile(this.superfls[id].name, this.superfls[id])
-                            this[this.superfls[id].name].assign('this', next, true)
-                        } else {
-                            const fl = this[this.superfls[id].name]
-                            Object.defineProperty(this, [this.superfls[id].name], {
-                                value: this.resolveObject('enum', {obj: NjFiles }),
-                                enumerable: true,
-                                writable: true,
-                                configurable: true
-                                }
-                            )
-
-                            const next = new NjFile(this.superfls[id].name, this.superfls[id])
-                            
-                            this[this.superfls[id].name].assign('this', fl, true)
-                            this[this.superfls[id].name].assign('this', next, true)
-                        }
-                    }
+    assignFiles(file, ext, path) {
+        const filepath = path+'/'+file.name
+        const name = file.name.split('.')[0]
+        if (this.decimal) {
+            if (this.last) Object.assign(this.fls, {[this.last + 1]: {path: filepath, name, ext}}), this.last = this.last + 1
+            else {
+                let number = 0
+                for (const i in this) {
+                    if (!isNaN(i)) if (number < Number(i)) number = Number(i)
                 }
-              
+                this.last = number;  Object.assign(this.fls, {[this.last + 1]: {path: filepath, name, ext}}), this.last = this.last + 1
+            }
+        } else {
+        
+            if (this.fls[name]) {
+                console.log(name + ' file is already defined')
+            } else {
+                Object.assign(this.fls, {[name]: {path: filepath, name, ext}})
             }
         }
-
-        
     }
-    
+
     readDir(name, ext, rec, loop) {
         try {
             var path
@@ -98,20 +104,18 @@ class NjFiles extends NjSuper {
                     if (name !== undefined) {
                         this.pathname = name
                     }
-                    
+
                 }
-    
+
                 if (!this.fls) {
                     this.fls = {}
                 }
             }
 
             if (!ext) {
-
                 if (this.pathname) {
-
                     Object.defineProperty(this, this.pathname, {
-                        
+
                         value: this.resolveObject(this.entites, this.fls),
                         enumerable: true,
                         writable: true,
@@ -119,10 +123,10 @@ class NjFiles extends NjSuper {
                     })
                     delete this.pathname
                 }
-                
+
 
             } else {
-                                            
+
                 if (rec === false) {
                     this.readDir(undefined, false, false)
                 } else {
@@ -132,40 +136,22 @@ class NjFiles extends NjSuper {
                             for (const dirent of dir) {
                                 if(!dirent.isFile()) {
                                     this.readDir(path+'/'+dirent.name, ext, rec, true)
+                                } else if (dirent.name.includes('.') && ext !== 'all') {
+                                    if (dirent.name.endsWith(ext) ) {
+                                        this.assignFiles(dirent, ext, path)
+                                    }
+                                } else if (ext === 'all') {
+                                    this.assignFiles(dirent, ext, path)
                                 }
-                                
-                                if (dirent.name.includes('.')) {
-                                    if (dirent.name.endsWith(ext)) {
-                                        const name = dirent.name.split('.')[0]
-                                        const filepath = path+'/'+dirent.name
-                                        if(dirent.isFile) {
-                                            if (this.fls[name]) {
-
-                                                if (!this.superfls) {
-                                                    this.superfls = new NjFiles()
-                                                    this.superfls.assign('this', {path: filepath, name}, true)
-                                                } else {
-                                                    this.superfls.assign('this', {path: filepath, name}, true)
-                                                }
-                                            } else {
-                                                Object.assign(this.fls, {[name]: {path: filepath, name}})
-                                            }
-                                            
-                                        }
-    
-                                    } 
-                                } 
-    
-                
                             }
                         } else {
                             this.readDir(undefined, false, false)
-                        } 
+                        }
                     }
-    
+
                 }
-                
-                
+
+
             }
 
         } catch (err) {
@@ -178,7 +164,7 @@ class NjFiles extends NjSuper {
 
         try {
             this.readDir(name, ext, rec)
-   
+
             this.readFiles()
         } catch (err) {
             console.error(err);
@@ -205,7 +191,7 @@ class NjFiles extends NjSuper {
         }
 
         Object.assign(this.dirs, {[opt.name]: {path}})
-        
+
         this.dir = opt.name
         return opt.name
     }
